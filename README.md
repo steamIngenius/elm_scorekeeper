@@ -1,25 +1,20 @@
-# Notes
+# A Basketball Scorekeeping App in Elm
 
-This directory contains the starter / build process for the scorekeeper app.  Use it as a starting point for building your app.
+To build: `$ gulp`
 
-You can find the completed for each video in the following folders:
+By default the app should be available on `localhost:4000` and the gulp config includes a watcher so that the app is recompiled every time a file is touched.
 
-## Planning the Scorekeeper App
+(You must still reload the app in the browser though)
 
-Code found in the `scorekeeper-planning` directory
+Take a look at `basketball_scorekeeper.org>` or maybe `PLAN.md` to see planning/progress
 
-## Beginning our Scorekeeper App | Model & Form Sections of Update and View
-
-Code found in the `scorekeeper-player-form` directory
-
-## Completing the Form Section
-
-Code found in the `scorekeeper-player-form-save-cancel` directory
-
-## Creating the Player Section
-
-Code found in the `scorekeeper-player-section` directory
-
-## Creating the Play Section
-
-Code found in the `scorekeeper-plays-section` directory
+And now a test to see what Elm syntax highlighting looks like in markdown.
+```elm
+main =
+  App.beginnerProgram
+    { model = 0
+    , view = view
+    , update = update
+    }
+```
+Neat.
