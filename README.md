@@ -6,7 +6,7 @@ By default the app should be available on `localhost:4000` and the gulp config i
 
 (You must still reload the app in the browser though)
 
-Take a look at `basketball_scorekeeper.org>` or maybe `PLAN.md` to see planning/progress
+Take a look at `basketball_scorekeeper.org` or maybe `PLAN.md` to see planning/progress
 
 And now a test to see what Elm syntax highlighting looks like in markdown.
 ```elm
