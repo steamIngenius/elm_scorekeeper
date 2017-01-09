@@ -4,7 +4,7 @@
 
 TODO: Model's Shape
 
-```
+```elm
 Model =
     { players : List Player
     , playerName : String
@@ -15,7 +15,7 @@ Model =
 
 TODO: Player Shape
 
-```
+```elm
 Player =
     { id : Int
     , name : String

@@ -1,68 +1,64 @@
 module Main exposing (..)
 
-import Html exposing (..)
-import Html.App as App
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (text)
 
 
--- model
+-- Model
 
 
 type alias Model =
-    Int
+    { players : List Player
+    , playerName : String
+    , playerId : Maybe Int
+    , plays : List Play
+    }
+
+
+type alias Player =
+    { id : Int
+    , name : String
+    , points : Int
+    }
+
+
+type alias Play =
+    { id : Int
+    , playerId : Int
+    , name : String
+    , points : Int
+    }
 
 
 initModel : Model
 initModel =
-    0
+    { players = []
+    , playerName = ""
+    , playerId = Nothing
+    , plays = []
+    }
 
 
 
--- update
+-- Update
 
 
 type Msg
-    = AddCalorie
-    | Clear
+    = Edit Player
+    | Score Player Int
+    | Input String
+    | Save
+    | Cancel
+    | DeletePlay Play
 
 
 update : Msg -> Model -> Model
 update msg model =
-    case msg of
-        AddCalorie ->
-            model + 1
-
-        Clear ->
-            initModel
+    model
 
 
 
--- view
+-- Main entry point
 
 
-view : Model -> Html Msg
-view model =
-    div []
-        [ h3 []
-            [ text ("Total Calories: " ++ (toString model)) ]
-        , button
-            [ type' "button"
-            , onClick AddCalorie
-            ]
-            [ text "Add" ]
-        , button
-            [ type' "button"
-            , onClick Clear
-            ]
-              [ text "Clear" ]
-        ]
-
-
-main : Program Never
 main =
-    App.beginnerProgram
-        { model = initModel
-        , update = update
-        , view = view
-        }
+    text "Hi"
