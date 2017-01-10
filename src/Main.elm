@@ -1,7 +1,8 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h2, ul, li)
 import Html.App as App
+import Html exposing (Html, text, div, h2, ul, li, input, button)
+import Html.Attributes exposing (value, placeholder)
 
 
 -- Model
@@ -9,7 +10,7 @@ import Html.App as App
 
 type alias Model =
     { players : List Player
-    , playerName : String
+    , playerName : Maybe String
     , playerId : Maybe Int
     , plays : List Play
     }
@@ -32,8 +33,12 @@ type alias Play =
 
 initModel : Model
 initModel =
-    { players = []
-    , playerName = ""
+    { players =
+        [ Player 1 "Drago Bloodfist" 0
+        , Player 2 "Hiccup Stoicson" 0
+        , Player 3 "Toothless Nightfury" 0
+        ]
+    , playerName = Nothing
     , playerId = Nothing
     , plays = []
     }
@@ -63,46 +68,88 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    mainView
+    mainView model
 
 
-mainView : Html Msg
-mainView =
+mainView : Model -> Html Msg
+mainView model =
     div []
         [ h2 []
             [ text "Score Keeper" ]
-        , div [] [ playerSection ]
+        , div []
+            [ playerSection model.players
+            , playerForm model.playerName
+            ]
         ]
 
 
-playerSection : Html Msg
-playerSection =
+playerSection : List Player -> Html Msg
+playerSection players =
     div []
         [ playerListHeader
-        , playerList
+        , playerList players
         , pointTotal 100
         ]
 
 
 playerListHeader : Html Msg
 playerListHeader =
-    div [] [ text "Player List Header" ]
+    div [] [ text "Name", text "Points" ]
 
 
-playerList : Html Msg
-playerList =
+playerList : List Player -> Html Msg
+playerList players =
     div []
         [ ul []
-            [ li [] [ text "Player 1" ]
-            , li [] [ text "Player 2" ]
-            , li [] [ text "Player 3" ]
-            ]
+            (List.map (\p -> li [] [ player p ]) players)
+        ]
+
+
+player : Player -> Html Msg
+player player =
+    div []
+        [ text player.name
+        , text "  "
+        , text (toString player.points)
         ]
 
 
 pointTotal : Int -> Html Msg
 pointTotal points =
     text (toString points)
+
+
+playerForm : Maybe String -> Html Msg
+playerForm playerName =
+    div []
+        [ input
+            [ placeholder "Add/Edit Player..."
+            , value (Maybe.withDefault "" playerName)
+            ]
+            []
+        , button [] [ text "Save" ]
+        , button [] [ text "Cancel" ]
+        ]
+
+
+playSection : Html Msg
+playSection =
+    div [] []
+
+
+playListHeader : Html Msg
+playListHeader =
+    div [] [ text "Play List Header" ]
+
+
+playList : Html Msg
+playList =
+    div [] []
+
+
+play : Html Msg
+play =
+    text "This is a play."
 
 
 
