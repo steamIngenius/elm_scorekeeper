@@ -40,8 +40,19 @@ initModel =
         ]
     , playerName = Nothing
     , playerId = Nothing
-    , plays = []
+    , plays =
+        [ Play 1 1 "Drago Bloodfist" 3
+        , Play 2 3 "Toothless Nightfury" 3
+        , Play 3 3 "Toothless Nightfury" 2
+        , Play 4 1 "Drago Bloodfist" 3
+        , Play 5 2 "Hiccup Stoicson" 1
+        ]
     }
+
+
+someSpaces : String
+someSpaces =
+    "    "
 
 
 
@@ -79,6 +90,7 @@ mainView model =
         , div []
             [ playerSection model.players
             , playerForm model.playerName
+            , playSection model.plays
             ]
         ]
 
@@ -94,7 +106,11 @@ playerSection players =
 
 playerListHeader : Html Msg
 playerListHeader =
-    div [] [ text "Name", text "Points" ]
+    div []
+        [ text "Name"
+        , text someSpaces
+        , text "Points"
+        ]
 
 
 playerList : List Player -> Html Msg
@@ -132,24 +148,38 @@ playerForm playerName =
         ]
 
 
-playSection : Html Msg
-playSection =
-    div [] []
+playSection : List Play -> Html Msg
+playSection plays =
+    div []
+        [ playListHeader
+        , playList plays
+        ]
 
 
 playListHeader : Html Msg
 playListHeader =
-    div [] [ text "Play List Header" ]
+    div []
+        [ text "Plays"
+        , text someSpaces
+        , text "Points"
+        ]
 
 
-playList : Html Msg
-playList =
-    div [] []
+playList : List Play -> Html Msg
+playList plays =
+    div []
+        [ ul [] (List.map (\p -> play p) plays)
+        ]
 
 
-play : Html Msg
-play =
-    text "This is a play."
+play : Play -> Html Msg
+play play =
+    li []
+        [ button [] [ text "X" ]
+        , text play.name
+        , text someSpaces
+        , text (toString play.points)
+        ]
 
 
 
