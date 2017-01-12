@@ -5,7 +5,7 @@
   <figcaption>Mockup</figcaption>
 </figure>
 
-To develop run: `$ gulp`
+To develop/run: `$ gulp`
 
 By default the app should be available on `localhost:4000` and the gulp config includes a watcher so that the app is recompiled every time a file is touched.
 

@@ -2,7 +2,7 @@
 
 ## Model
 
-TODO: Model's Shape
+~~TODO: Model's Shape~~
 
 ```elm
 Model =
@@ -13,7 +13,7 @@ Model =
     }
 ```
 
-TODO: Player Shape
+~~TODO: Player Shape~~
 
 ```elm
 Player =
@@ -23,7 +23,7 @@ Player =
     }
 ```
 
-TODO: Play Shape
+~~TODO: Play Shape~~
 
 ```
 Play =
@@ -34,7 +34,7 @@ Play =
     }
 ```
 
-TODO: Initial Model
+~~TODO: Initial Model~~
 
 ## Update
 
@@ -47,7 +47,7 @@ What can be done in our app?
 * Cancel
 * DeletePlay
 
-TODO: Create Message Union Type
+~~TODO: Create Message Union Type~~
 
 TODO: Create update function(s)
 

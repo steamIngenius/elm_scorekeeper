@@ -2,7 +2,8 @@ module Main exposing (..)
 
 import Html.App as App
 import Html exposing (Html, text, div, h2, ul, li, input, button, span)
-import Html.Attributes exposing (value, placeholder, style)
+import Html.Attributes exposing (value, placeholder, style, class)
+import Html.Events exposing (onClick)
 
 
 -- Model
@@ -61,8 +62,14 @@ view model =
 
 mainView : Model -> Html Msg
 mainView model =
-    div []
-        [ h2 []
+    div
+        []
+        [ h2
+            [ style
+                [ ( "display", "flex" )
+                , ( "justify-content", "center" )
+                ]
+            ]
             [ text "Score Keeper" ]
         , div []
             [ playerSection model.players
@@ -83,59 +90,93 @@ playerSection players =
             [ playerListHeader
             , playerList players
             , pointTotal totalPoints
-            , div [ style [ ( "clear", "both" ) ] ] []
             ]
 
 
 playerListHeader : Html Msg
 playerListHeader =
-    div []
-        [ text "Name"
-        , span [ style [ ( "float", "right" ) ] ] [ text "Points" ]
-        ]
+    let
+        headerStyle =
+            style
+                [ ( "display", "flex" )
+                , ( "justify-content", "space-between" )
+                , ( "align-items", "baseline" )
+                , ( "background-color", "lightgray" )
+                ]
+    in
+        div
+            [ headerStyle ]
+            [ span [] [ text "Name" ]
+            , span [] [ text "Points" ]
+            ]
 
 
 playerList : List Player -> Html Msg
 playerList players =
     div []
-        [ ul []
-            (List.map (\p -> li [] [ player p ]) players)
-        ]
+        (List.sortBy .id players
+            |> List.map player
+        )
 
 
 player : Player -> Html Msg
 player player =
-    div []
-        [ text player.name
-        , button [] [ text "1pt" ]
-        , button [] [ text "2pt" ]
-        , button [] [ text "3pt" ]
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "justify-content", "space-between" )
+            ]
+        ]
+        [ button [ onClick (Edit player) ] [ text "..." ]
+        , text player.name
+        , span []
+            [ button [ onClick (Score player 1) ] [ text "1pt" ]
+            , button [ onClick (Score player 2) ] [ text "2pt" ]
+            , button [ onClick (Score player 3) ] [ text "3pt" ]
+            ]
         , text (toString player.points)
         ]
 
 
 pointTotal : Int -> Html Msg
 pointTotal points =
-    div []
-        [ span
-            [ style
-                [ ( "float", "right" )
-                ]
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "justify-content", "flex-end" )
             ]
+        ]
+        [ span []
             [ text ("Total: " ++ (toString points)) ]
         ]
 
 
 playerForm : Maybe String -> Html Msg
 playerForm playerName =
-    div []
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "justify-content", "space-between" )
+            ]
+        ]
         [ input
             [ placeholder "Add/Edit Player..."
             , value (Maybe.withDefault "" playerName)
+            , style
+                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" )
+                ]
             ]
             []
-        , button [] [ text "Save" ]
-        , button [] [ text "Cancel" ]
+        , button
+            [ style
+                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" ) ]
+            ]
+            [ text "Save" ]
+        , button
+            [ style
+                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" ) ]
+            ]
+            [ text "Cancel" ]
         ]
 
 
@@ -149,25 +190,45 @@ playSection plays =
 
 playListHeader : Html Msg
 playListHeader =
-    div []
-        [ text "Plays"
-        , span [ style [ ( "float", "right" ) ] ] [ text "Points" ]
-        ]
+    let
+        headerStyle =
+            style
+                [ ( "display", "flex" )
+                , ( "justify-content", "space-between" )
+                , ( "align-items", "baseline" )
+                , ( "background-color", "lightgray" )
+                ]
+    in
+        div
+            [ headerStyle ]
+            [ span [] [ text "Plays" ]
+            , span [] [ text "Points" ]
+            ]
 
 
 playList : List Play -> Html Msg
 playList plays =
-    div []
-        [ ul [] (List.map (\p -> play p) plays)
-        ]
+    div
+        []
+        (List.map (\p -> play p) plays)
 
 
 play : Play -> Html Msg
 play play =
-    li []
-        [ button [] [ text "x" ]
-        , text play.name
-        , text (toString play.points)
+    span
+        [ style
+            [ ( "display", "flex" )
+            , ( "justify-content", "space-between" )
+            ]
+        ]
+        [ button
+            [ style
+                [ ( "color", "red" )
+                ]
+            ]
+            [ text "x" ]
+        , span [] [ text play.name ]
+        , span [] [ text (toString play.points) ]
         ]
 
 
@@ -186,7 +247,33 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
-    model
+    let
+        _ =
+            Debug.log "update fired" msg
+    in
+        case msg of
+            Score player points ->
+                { model
+                    | players =
+                        updatePlayers
+                            { player
+                                | points = player.points + points
+                            }
+                            model.players
+                }
+
+            _ ->
+                model
+
+
+updatePlayers : Player -> List Player -> List Player
+updatePlayers player players =
+    let
+        newPlayerList =
+            List.partition (\p -> p.id == player.id) players
+                |> snd
+    in
+        player :: newPlayerList
 
 
 
