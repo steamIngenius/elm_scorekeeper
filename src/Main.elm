@@ -1,8 +1,8 @@
 module Main exposing (..)
 
 import Html.App as App
-import Html exposing (Html, text, div, h2, ul, li, input, button)
-import Html.Attributes exposing (value, placeholder)
+import Html exposing (Html, text, div, h2, ul, li, input, button, span)
+import Html.Attributes exposing (value, placeholder, style)
 
 
 -- Model
@@ -34,9 +34,9 @@ type alias Play =
 initModel : Model
 initModel =
     { players =
-        [ Player 1 "Drago Bloodfist" 0
-        , Player 2 "Hiccup Stoicson" 0
-        , Player 3 "Toothless Nightfury" 0
+        [ Player 1 "Drago Bloodfist" 20
+        , Player 2 "Hiccup Stoicson" 7
+        , Player 3 "Toothless Nightfury" 5
         ]
     , playerName = Nothing
     , playerId = Nothing
@@ -48,29 +48,6 @@ initModel =
         , Play 5 2 "Hiccup Stoicson" 1
         ]
     }
-
-
-someSpaces : String
-someSpaces =
-    "    "
-
-
-
--- Update
-
-
-type Msg
-    = Edit Player
-    | Score Player Int
-    | Input String
-    | Save
-    | Cancel
-    | DeletePlay Play
-
-
-update : Msg -> Model -> Model
-update msg model =
-    model
 
 
 
@@ -97,19 +74,24 @@ mainView model =
 
 playerSection : List Player -> Html Msg
 playerSection players =
-    div []
-        [ playerListHeader
-        , playerList players
-        , pointTotal 100
-        ]
+    let
+        totalPoints =
+            List.map (\player -> player.points) players
+                |> List.sum
+    in
+        div []
+            [ playerListHeader
+            , playerList players
+            , pointTotal totalPoints
+            , div [ style [ ( "clear", "both" ) ] ] []
+            ]
 
 
 playerListHeader : Html Msg
 playerListHeader =
     div []
         [ text "Name"
-        , text someSpaces
-        , text "Points"
+        , span [ style [ ( "float", "right" ) ] ] [ text "Points" ]
         ]
 
 
@@ -125,14 +107,23 @@ player : Player -> Html Msg
 player player =
     div []
         [ text player.name
-        , text "  "
+        , button [] [ text "1pt" ]
+        , button [] [ text "2pt" ]
+        , button [] [ text "3pt" ]
         , text (toString player.points)
         ]
 
 
 pointTotal : Int -> Html Msg
 pointTotal points =
-    text (toString points)
+    div []
+        [ span
+            [ style
+                [ ( "float", "right" )
+                ]
+            ]
+            [ text ("Total: " ++ (toString points)) ]
+        ]
 
 
 playerForm : Maybe String -> Html Msg
@@ -160,8 +151,7 @@ playListHeader : Html Msg
 playListHeader =
     div []
         [ text "Plays"
-        , text someSpaces
-        , text "Points"
+        , span [ style [ ( "float", "right" ) ] ] [ text "Points" ]
         ]
 
 
@@ -175,11 +165,28 @@ playList plays =
 play : Play -> Html Msg
 play play =
     li []
-        [ button [] [ text "X" ]
+        [ button [] [ text "x" ]
         , text play.name
-        , text someSpaces
         , text (toString play.points)
         ]
+
+
+
+-- Update
+
+
+type Msg
+    = Edit Player
+    | Score Player Int
+    | Input String
+    | Save
+    | Cancel
+    | DeletePlay Play
+
+
+update : Msg -> Model -> Model
+update msg model =
+    model
 
 
 
