@@ -1,9 +1,9 @@
 module Main exposing (..)
 
 import Html.App as App
-import Html exposing (Html, text, div, h2, ul, li, input, button, span)
-import Html.Attributes exposing (value, placeholder, style, class)
-import Html.Events exposing (onClick)
+import Html exposing (Html, text, div, h2, ul, li, input, button, span, hr)
+import Html.Attributes exposing (value, placeholder, style, class, id)
+import Html.Events exposing (onClick, onInput)
 
 
 -- Model
@@ -35,19 +35,13 @@ type alias Play =
 initModel : Model
 initModel =
     { players =
-        [ Player 1 "Drago Bloodfist" 20
-        , Player 2 "Hiccup Stoicson" 7
-        , Player 3 "Toothless Nightfury" 5
+        [ Player 1 "Drago Bloodfist" 0
+        , Player 2 "Hiccup Stoicson" 0
+        , Player 3 "Toothless Nightfury" 0
         ]
     , playerName = Nothing
     , playerId = Nothing
-    , plays =
-        [ Play 1 1 "Drago Bloodfist" 3
-        , Play 2 3 "Toothless Nightfury" 3
-        , Play 3 3 "Toothless Nightfury" 2
-        , Play 4 1 "Drago Bloodfist" 3
-        , Play 5 2 "Hiccup Stoicson" 1
-        ]
+    , plays = []
     }
 
 
@@ -70,10 +64,12 @@ mainView model =
                 , ( "justify-content", "center" )
                 ]
             ]
-            [ text "Score Keeper" ]
+            [ text "SCORE KEEPER" ]
         , div []
             [ playerSection model.players
+            , hr [ style [ ( "visibility", "hidden" ) ] ] []
             , playerForm model.playerName
+            , hr [ style [ ( "visibility", "hidden" ) ] ] []
             , playSection model.plays
             ]
         ]
@@ -128,8 +124,11 @@ player player =
             ]
         ]
         [ button [ onClick (Edit player) ] [ text "..." ]
-        , text player.name
-        , span []
+        , span
+            [ style [ ( "flex", "1" ) ] ]
+            [ text player.name ]
+        , span
+            [ style [ ( "flex", "1" ) ] ]
             [ button [ onClick (Score player 1) ] [ text "1pt" ]
             , button [ onClick (Score player 2) ] [ text "2pt" ]
             , button [ onClick (Score player 3) ] [ text "3pt" ]
@@ -160,21 +159,25 @@ playerForm playerName =
             ]
         ]
         [ input
-            [ placeholder "Add/Edit Player..."
+            [ onInput Input
+            , placeholder "Add/Edit Player..."
             , value (Maybe.withDefault "" playerName)
             , style
-                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" )
-                ]
+                [ ( "box-shadow", "3px 3px 5px 0px rgba(0,0,0,0.75)" ) ]
             ]
             []
         , button
             [ style
-                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" ) ]
+                [ ( "box-shadow", "3px 3px 5px 0px rgba(0,0,0,0.75)" ) ]
+            , onClick Save
+            , id "save-button"
             ]
             [ text "Save" ]
         , button
             [ style
-                [ ( "box-shadow", "4px 4px 5px 0px rgba(0,0,0,0.75)" ) ]
+                [ ( "box-shadow", "3px 3px 5px 0px rgba(0,0,0,0.75)" ) ]
+            , onClick Cancel
+            , id "cancel-button"
             ]
             [ text "Cancel" ]
         ]
@@ -225,6 +228,7 @@ play play =
             [ style
                 [ ( "color", "red" )
                 ]
+            , onClick (DeletePlay play)
             ]
             [ text "x" ]
         , span [] [ text play.name ]
@@ -249,7 +253,7 @@ update : Msg -> Model -> Model
 update msg model =
     let
         _ =
-            Debug.log "update fired" msg
+            Debug.log "update fired" ( msg, model )
     in
         case msg of
             Score player points ->
@@ -260,10 +264,39 @@ update msg model =
                                 | points = player.points + points
                             }
                             model.players
+                    , plays =
+                        updatePlays
+                            (Play 0 player.id player.name points)
+                            model.plays
+                }
+
+            DeletePlay play ->
+                removePlay play.id model
+
+            Input content ->
+                { model
+                    | playerName = Just content
+                }
+
+            Save ->
+                { model
+                    | playerName = Nothing
+                    , playerId = Nothing
+                }
+
+            Cancel ->
+                { model
+                    | playerName = Nothing
+                    , playerId = Nothing
                 }
 
             _ ->
                 model
+
+
+removePlay : Int -> Model -> Model
+removePlay id model =
+    model
 
 
 updatePlayers : Player -> List Player -> List Player
@@ -274,6 +307,23 @@ updatePlayers player players =
                 |> snd
     in
         player :: newPlayerList
+
+
+updatePlays : Play -> List Play -> List Play
+updatePlays play plays =
+    let
+        nextId =
+            List.map (\p -> p.id) plays
+                |> List.maximum
+                |> Maybe.withDefault 0
+                |> (+) 1
+
+        newPlay =
+            { play
+                | id = nextId
+            }
+    in
+        newPlay :: plays
 
 
 
