@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html.App as App
-import Html exposing (Html, text, div, h2, ul, li, input, button, span, hr)
+import Html exposing (Html, text, div, h2, input, button, span, hr)
 import Html.Attributes exposing (value, placeholder, style, class, id)
 import Html.Events exposing (onClick, onInput)
 
@@ -280,8 +280,22 @@ update msg model =
 
             Save ->
                 { model
-                    | playerName = Nothing
+                    | players =
+                        updatePlayers
+                            (Player
+                                (Maybe.withDefault 0 model.playerId)
+                                (Maybe.withDefault "uknown name" model.playerName)
+                                0
+                            )
+                            model.players
                     , playerId = Nothing
+                    , playerName = Nothing
+                }
+
+            Edit player ->
+                { model
+                    | playerId = (Just player.id)
+                    , playerName = (Just player.name)
                 }
 
             Cancel ->
@@ -289,9 +303,6 @@ update msg model =
                     | playerName = Nothing
                     , playerId = Nothing
                 }
-
-            _ ->
-                model
 
 
 removePlay : Int -> Model -> Model
@@ -302,11 +313,22 @@ removePlay id model =
 updatePlayers : Player -> List Player -> List Player
 updatePlayers player players =
     let
+        nextId =
+            List.map (\p -> p.id) players
+                |> List.maximum
+                |> Maybe.withDefault 0
+                |> (+) 1
+
         newPlayerList =
             List.partition (\p -> p.id == player.id) players
                 |> snd
     in
-        player :: newPlayerList
+        case player.id of
+            0 ->
+                { player | id = nextId } :: newPlayerList
+
+            _ ->
+                player :: newPlayerList
 
 
 updatePlays : Play -> List Play -> List Play
