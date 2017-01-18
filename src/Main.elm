@@ -4,7 +4,6 @@ import Html.App as App
 import Html exposing (Html, text, div, h2, input, button, span, hr)
 import Html.Attributes exposing (value, placeholder, style, class, id)
 import Html.Events exposing (onClick, onInput)
-import Array
 
 
 -- Model
