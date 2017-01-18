@@ -269,18 +269,7 @@ update msg model =
     in
         case msg of
             Score player points ->
-                { model
-                    | players =
-                        updatePlayers
-                            { player
-                                | points = player.points + points
-                            }
-                            model.players
-                    , plays =
-                        updatePlays
-                            (Play 0 player.id player.name points)
-                            model.plays
-                }
+                updateScore player points model
 
             DeletePlay play ->
                 removePlay play.id model
@@ -305,6 +294,22 @@ update msg model =
                     | playerName = Nothing
                     , playerId = Nothing
                 }
+
+
+updateScore : Player -> Int -> Model -> Model
+updateScore player points model =
+    { model
+        | players =
+            updatePlayers
+                { player
+                    | points = player.points + points
+                }
+                model.players
+        , plays =
+            updatePlays
+                (Play 0 player.id player.name points)
+                model.plays
+    }
 
 
 removePlay : Int -> Model -> Model
