@@ -4,6 +4,7 @@ import Html.App as App
 import Html exposing (Html, text, div, h2, input, button, span, hr)
 import Html.Attributes exposing (value, placeholder, style, class, id)
 import Html.Events exposing (onClick, onInput)
+import Array
 
 
 -- Model
@@ -13,6 +14,7 @@ type alias Model =
     { players : List Player
     , playerName : Maybe String
     , playerId : Maybe Int
+    , playerPoints : Maybe Int
     , plays : List Play
     }
 
@@ -41,8 +43,19 @@ initModel =
         ]
     , playerName = Nothing
     , playerId = Nothing
+    , playerPoints = Nothing
     , plays = []
     }
+
+
+defaultPlayer : Player
+defaultPlayer =
+    Player 0 "" 0
+
+
+defaultPlay : Play
+defaultPlay =
+    Play 0 0 "" 0
 
 
 
@@ -279,23 +292,13 @@ update msg model =
                 }
 
             Save ->
-                { model
-                    | players =
-                        updatePlayers
-                            (Player
-                                (Maybe.withDefault 0 model.playerId)
-                                (Maybe.withDefault "uknown name" model.playerName)
-                                0
-                            )
-                            model.players
-                    , playerId = Nothing
-                    , playerName = Nothing
-                }
+                savePlayer model
 
             Edit player ->
                 { model
                     | playerId = (Just player.id)
                     , playerName = (Just player.name)
+                    , playerPoints = (Just player.points)
                 }
 
             Cancel ->
@@ -307,7 +310,68 @@ update msg model =
 
 removePlay : Int -> Model -> Model
 removePlay id model =
-    model
+    let
+        ( playList, plays ) =
+            List.partition (\p -> p.id == id) model.plays
+
+        play =
+            List.head playList
+                |> Maybe.withDefault defaultPlay
+
+        points =
+            play.points
+
+        ( playerList, players ) =
+            List.partition (\p -> p.id == play.playerId) model.players
+
+        player =
+            List.head playerList
+                |> Maybe.withDefault defaultPlayer
+    in
+        { model
+            | plays = plays
+            , players =
+                { player
+                    | points = player.points - points
+                }
+                    :: players
+        }
+
+
+savePlayer : Model -> Model
+savePlayer model =
+    case model.playerName of
+        Nothing ->
+            model
+
+        Just playerName ->
+            let
+                newPlayList =
+                    List.map
+                        (\play ->
+                            if play.playerId == (Maybe.withDefault 0 model.playerId) then
+                                { play
+                                    | name = playerName
+                                }
+                            else
+                                play
+                        )
+                        model.plays
+            in
+                { model
+                    | players =
+                        updatePlayers
+                            (Player
+                                (Maybe.withDefault 0 model.playerId)
+                                (Maybe.withDefault "" model.playerName)
+                                (Maybe.withDefault 0 model.playerPoints)
+                            )
+                            model.players
+                    , playerId = Nothing
+                    , playerName = Nothing
+                    , playerPoints = Nothing
+                    , plays = newPlayList
+                }
 
 
 updatePlayers : Player -> List Player -> List Player
