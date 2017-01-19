@@ -1,9 +1,9 @@
 module Main exposing (..)
 
 import Html.App as App
-import Html exposing (Html, text, div, h2, input, button, span, hr)
-import Html.Attributes exposing (value, placeholder, style, class, id)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, text, div, h2, input, button, span, hr, form)
+import Html.Attributes exposing (value, placeholder, style, class, id, type')
+import Html.Events exposing (onClick, onInput, onSubmit)
 
 
 -- Model
@@ -69,7 +69,7 @@ view model =
 mainView : Model -> Html Msg
 mainView model =
     div
-        []
+        [ class "scoreboard" ]
         [ h2
             [ style
                 [ ( "display", "flex" )
@@ -164,11 +164,12 @@ pointTotal points =
 
 playerForm : Maybe String -> Html Msg
 playerForm playerName =
-    div
+    form
         [ style
             [ ( "display", "flex" )
             , ( "justify-content", "space-between" )
             ]
+          , onSubmit Save
         ]
         [ input
             [ onInput Input
@@ -181,8 +182,8 @@ playerForm playerName =
         , button
             [ style
                 [ ( "box-shadow", "3px 3px 5px 0px rgba(0,0,0,0.75)" ) ]
-            , onClick Save
             , id "save-button"
+            , type' "submit"
             ]
             [ text "Save" ]
         , button
