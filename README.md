@@ -1,8 +1,9 @@
 # A Basketball Scorekeeping App in Elm
 
+Run live [here](https://steamingenius.github.io/elm_scorekeeper/)
+
 <figure> 
   <img src="./score_keeper.png" width="250">
-  <figcaption>Mockup</figcaption>
 </figure>
 
 To develop/run: `$ gulp`
