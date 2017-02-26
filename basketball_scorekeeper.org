@@ -1,0 +1,65 @@
+* Planning Basketball Scorekeeper App
+
+* Model
+
+~
+Model =
+  { players : List Player
+  , playerName : String
+  , playerId : Maybe Int
+  , plays : List Play
+  }
+~
+* TODO: Player Shape
+
+~
+Player =
+  { id : Int
+  , name : String
+  , points : Int
+  }
+~
+
+* TODO: Play Shape
+
+~
+Play =
+  { id : Int
+  , playerId : Int
+  , name : String
+  , points : Int
+  }
+~
+* TODO: Initial Model Value
+
+* TODO: Update
+What things can be done in our app?
+** Edit - clicking icon puts user in edit mode
+*** Indicates which player is being edited
+*** Set Input to the player's name
+** Score - Clicking 2/3 point buttons next to player who scored
+** Input - This is where edits happen and new users are entered
+** Save - Add a new player or confirm edit of existing
+** Cancel - clears input and cancels edit mode
+** DeletePlay - Little red x
+
+* TODO: Create Message Untion Type For These Actions
+
+* TODO: Create update function(s)
+** An update function that likely calls other functions!
+
+* View
+What are the Logical Sections/Groupings of our UI?
+** Main view (Outermost function)
+*** Player Section
+**** Player List Header
+**** Player List
+***** Player
+**** Point total
+*** Player Form
+*** Play Section
+**** Play list header
+**** Play list
+***** play
+
+* TODO: Create functions for each of the above
